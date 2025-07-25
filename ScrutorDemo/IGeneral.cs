@@ -4,5 +4,7 @@
     {
         bool Create(T value);
         IEnumerable<T> GetAll();
+        IEnumerable<T> IfExistGetAll();
+        string CleanCache();
     }
 }

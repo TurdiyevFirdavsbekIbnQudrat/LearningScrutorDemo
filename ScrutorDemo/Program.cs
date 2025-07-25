@@ -1,4 +1,7 @@
+using Enyim.Caching;
+using Enyim.Caching.Configuration;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using ScrutorDemo;
 using ScrutorDemo.Repository;
 
@@ -16,9 +19,16 @@ builder.Services.AddDbContext<ScrutorDb>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")
     , providerOptions => providerOptions.EnableRetryOnFailure());
 });
+builder.Services.AddEnyimMemcached(o => o.Servers = new List<Server> { new Server { Address = "localhost", Port = 11211 } });
 
-builder.Services.AddScoped<IGeneral<User>, UserRepository>();
-builder.Services.AddScoped<IGeneral<Car>, CarRepository>();
+builder.Services.AddSingleton<IMemoryCache, MemoryCache>();
+//builder.Services.AddScoped<IGeneral<User>, UserRepository>();
+//builder.Services.AddScoped<IGeneral<Car>, CarRepository>();
+
+builder.Services.Scan(x=>x.FromAssemblies(typeof(IGeneral<>).Assembly)
+                        .AddClasses(c=>c.AssignableTo(typeof(IGeneral<>)))
+                        .AsImplementedInterfaces()
+                        .WithScopedLifetime());
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
