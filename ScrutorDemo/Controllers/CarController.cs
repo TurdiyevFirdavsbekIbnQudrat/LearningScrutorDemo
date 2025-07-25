@@ -12,14 +12,20 @@ namespace ScrutorDemo.Controllers
         {
             _repository = repository;
         }
-        public IActionResult UserCreate(Car user)
+        [HttpPost]
+        public OkObjectResult UserCreate(Car user)
         {
             return Ok(_repository.Create(user));
         }
-
-        public IActionResult UserGetAll()
+        [HttpGet]
+        public OkObjectResult UserGetAll()
         {
             return Ok(_repository.GetAll());
+        }
+        [HttpGet]
+        public IActionResult UserIfExistGetAll()
+        {
+            return Ok(_repository.IfExistGetAll());
         }
     }
 }
